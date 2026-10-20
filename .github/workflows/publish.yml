@@ -1,0 +1,47 @@
+name: Publish to LuaRocks
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version (without v)
+        required: true
+        default: 0.0.1
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: luarocks-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    env:
+      VERSION: ${{ inputs.version }}
+    steps:
+      - name: Validate version
+        run: '[[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]'
+      - uses: actions/checkout@v6
+        with:
+          ref: v${{ inputs.version }}
+          persist-credentials: false
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential lua5.4 liblua5.4-dev libssl-dev zip unzip
+      - name: Install LuaRocks 3.13
+        run: |
+          curl --fail --location https://luarocks.org/releases/luarocks-3.13.0.tar.gz -o "$RUNNER_TEMP/luarocks.tar.gz"
+          tar -xzf "$RUNNER_TEMP/luarocks.tar.gz" -C "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/luarocks-3.13.0"
+          ./configure --prefix="$RUNNER_TEMP/luarocks" --with-lua=/usr --lua-version=5.4 --with-lua-interpreter=lua5.4
+          make
+          make install
+          echo "$RUNNER_TEMP/luarocks/bin" >> "$GITHUB_PATH"
+      - name: Test, package and publish
+        env:
+          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
+        run: make publish LUA=lua5.4 VERSION="$VERSION"
