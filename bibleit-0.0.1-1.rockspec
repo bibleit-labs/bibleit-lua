@@ -6,12 +6,13 @@ source = {
    tag = "v0.0.1",
 }
 description = {
-   summary = "Lua SDK for Bibleit REST, OAuth and SSH protocols",
+   summary = "Bring Bibleit’s Bible reading and live Scripture sharing into your Lua applications.",
    detailed = [[
-      Build Bibleit integrations in Lua with a client for REST resources,
-      OAuth and browser authorization, and SSH command helpers. Includes
-      streaming responses, pagination, and model constructors, with API
-      coverage matching the Bibleit Go SDK. Supports Lua 5.1-5.5 and LuaJIT 2.1.
+      Build tools that help people read, study, and share Scripture with Bibleit.
+      Access Bible translations and verses, manage live sessions, and create
+      presentations from Lua. Connect your applications to the Bibleit platform
+      with support for authentication, live events, and SSH commands.
+      Learn more at https://bibleit.app.
    ]],
    homepage = "https://github.com/bibleit-labs/bibleit-lua",
    license = "MIT",
