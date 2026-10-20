@@ -24,9 +24,11 @@ license included in the documentation.
 ## Publish
 
 To publish from GitHub Actions, configure the repository secret
-`LUAROCKS_API_KEY`, then run the **Publish to LuaRocks** workflow with the release
-version (without `v`). The workflow checks out the existing tag, runs all tests,
-and uploads the source rock using the secret.
+`LUAROCKS_API_KEY`, then push a version tag such as `v0.0.2`. The **Publish to
+LuaRocks** workflow runs automatically. You can also run it manually with the
+release version (without `v`). Both options check out the tag, run all tests,
+and upload the source rock using the secret. Published versions cannot be
+uploaded again; choose an unpublished version when running it manually.
 
 Set `LUAROCKS_API_KEY` in the environment or a CI secret. An ignored `.env` file
 can store the key locally; load it into your environment before running:

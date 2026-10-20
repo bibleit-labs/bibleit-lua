@@ -7,6 +7,12 @@ source = {
 }
 description = {
    summary = "Lua SDK for Bibleit REST, OAuth and SSH protocols",
+   detailed = [[
+      Build Bibleit integrations in Lua with a client for REST resources,
+      OAuth and browser authorization, and SSH command helpers. Includes
+      streaming responses, pagination, and model constructors, with API
+      coverage matching the Bibleit Go SDK. Supports Lua 5.1-5.5 and LuaJIT 2.1.
+   ]],
    homepage = "https://github.com/bibleit-labs/bibleit-lua",
    license = "MIT",
 }
