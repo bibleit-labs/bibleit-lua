@@ -1,0 +1,36 @@
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# LuaRocks project configuration, dependency tree and generated wrappers
+/.luarocks/
+/lua_modules/
+/rocks/
+/lua
+/luarocks
+/lua.bat
+/luarocks.bat
+*.rock
+
+# Compiled Lua/native modules
+*.luac
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.a
+
+# Build, release and coverage output
+/build/
+/dist/
+/coverage/
+luacov.stats.out
+luacov.report.out
+
+# Editor and OS files
+.DS_Store
+*.swp
+*.swo
+*~

@@ -1,0 +1,26 @@
+Bibleit Lua SDK notices
+
+Bibleit-authored code, the wire contract and shared protocol fixtures are licensed
+under the repository MIT license. The Lua protocol/domain implementation adapts
+behavior from Bibleit Go (https://github.com/bibleit-labs/bibleit-go), retaining
+its MIT attribution in LICENSE and docs/LICENSE.
+
+Lua operation/schema metadata follows the checked-in public OpenAPI contract. Go code-generator templates and Go
+runtime dependencies are not included in this package.
+
+Runtime dependencies are installed separately by LuaRocks:
+
+- dkjson: MIT/X11, https://dkolf.de/dkjson-lua/
+- LuaSocket: MIT, https://github.com/lunarmodules/luasocket
+- LuaSec: MIT, https://github.com/lunarmodules/luasec
+- OpenSSL (used by LuaSec): https://www.openssl.org/source/license.html
+
+Retain each dependency's own license/notices when redistributing its source or
+native binaries. This package's .all.rock contains Lua modules and documentation;
+it does not bundle native dependency binaries.
+
+The optional development formatter is LuaLS/EmmyLuaCodeStyle, invoked through
+sumneko.lua. It is not part of the runtime package.
+
+Development tests use LuaUnit (BSD), https://github.com/bluebird75/luaunit.
+It is installed separately and is not a runtime dependency.

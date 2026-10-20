@@ -1,0 +1,64 @@
+name: Test
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  runtimes:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        lua: ["5.1.5", "5.2.4", "5.3.6", "5.4.8", "5.5.1", "luajit"]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Lua build dependencies
+        if: matrix.lua != 'luajit'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libreadline-dev
+      - name: Install Lua
+        env:
+          LUA_RELEASE: ${{ matrix.lua }}
+        run: |
+          if [ "$LUA_RELEASE" = luajit ]; then
+            sudo apt-get update
+            sudo apt-get install -y luajit
+            mkdir -p "$RUNNER_TEMP/lua/bin"
+            ln -s /usr/bin/luajit "$RUNNER_TEMP/lua/bin/lua"
+          else
+            curl --fail --location "https://www.lua.org/ftp/lua-$LUA_RELEASE.tar.gz" -o "$RUNNER_TEMP/lua.tar.gz"
+            tar -xzf "$RUNNER_TEMP/lua.tar.gz" -C "$RUNNER_TEMP"
+            make -C "$RUNNER_TEMP/lua-$LUA_RELEASE" linux -j2
+            make -C "$RUNNER_TEMP/lua-$LUA_RELEASE" install INSTALL_TOP="$RUNNER_TEMP/lua"
+          fi
+          echo "$RUNNER_TEMP/lua/bin" >> "$GITHUB_PATH"
+      # The JSON dependency is pure Lua; share the 5.1 tree across interpreters.
+      - name: Install Lua test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.1 luarocks zip unzip
+          luarocks --lua-dir=/usr --lua-version=5.1 --tree ./lua_modules install dkjson 2.11-1
+          luarocks --lua-dir=/usr --lua-version=5.1 --tree ./lua_modules install luaunit 3.5-1
+          echo 'LUA_PATH=./lua_modules/share/lua/5.1/?.lua;./lua_modules/share/lua/5.1/?/init.lua;;' >> "$GITHUB_ENV"
+      # The packaging job runs the full LuaRocks suite, including native TLS.
+      - run: make test TEST_ARGS="-p TestSDK"
+        env:
+          LUA_PATH: "./lua_modules/share/lua/5.1/?.lua;./lua_modules/share/lua/5.1/?/init.lua;;"
+  packaging-and-tls:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential lua5.4 liblua5.4-dev libssl-dev zip unzip
+      - name: Install LuaRocks 3.13
+        run: |
+          curl --fail --location https://luarocks.org/releases/luarocks-3.13.0.tar.gz -o "$RUNNER_TEMP/luarocks.tar.gz"
+          tar -xzf "$RUNNER_TEMP/luarocks.tar.gz" -C "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/luarocks-3.13.0"
+          ./configure --prefix="$RUNNER_TEMP/luarocks" --with-lua=/usr --lua-version=5.4 --with-lua-interpreter=lua5.4
+          make
+          make install
+          echo "$RUNNER_TEMP/luarocks/bin" >> "$GITHUB_PATH"
+      - run: make package LUA=lua5.4
