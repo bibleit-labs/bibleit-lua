@@ -95,7 +95,7 @@ function TestSDK.testSSHCommandQuotingValidationEnumsAndFiniteFraming()
    fails(function() return b.decode_response('OK text="' .. string.rep("x", 2097152) .. '"\n') end)
 end
 
-function TestSDK.testAll88RESTOperationsAnd105SchemasMatchContract()
+function TestSDK.testAllRESTOperationsAndSchemasMatchContract()
    local operations = b.operations(); local operation_count = 0
    for path, item in pairs(spec.paths) do
       for method, op in pairs(item) do
@@ -118,7 +118,7 @@ function TestSDK.testAll88RESTOperationsAnd105SchemasMatchContract()
          end
       end
    end
-   eq(operation_count, 88); eq(#b.operation_names(), 88)
+   eq(operation_count, 89); eq(#b.operation_names(), 89)
    local count = 0
    for name, schema in pairs(spec.components.schemas) do
       count = count + 1
@@ -127,8 +127,25 @@ function TestSDK.testAll88RESTOperationsAnd105SchemasMatchContract()
       deep(assert(http.decode_body(json.encode(metadata))), schema)
       assert(type(b.models[name]) == "function")
    end
-   eq(count, 105); eq(#b.models.names(), 105)
+   eq(count, 111); eq(#b.models.names(), 111)
    operations.getLive.path = "/bad"; eq(b.operations().getLive.path, "/lives/{live_id}")
+end
+
+function TestSDK.testGrantResponseScopesUseSeparateMetadata()
+   local grant = assert(b.models.schema("OAuthGrant"))
+   eq(grant.properties.scopes.items["$ref"], "#/components/schemas/OAuthGrantedScope")
+   local granted, ordinary = {}, {}
+   for _, scope in ipairs(assert(b.models.schema("OAuthGrantedScope")).enum) do granted[scope] = true end
+   for _, scope in ipairs(assert(b.models.schema("OAuthScope")).enum) do ordinary[scope] = true end
+   for _, scope in ipairs({"live.queue.stage", "live.rename"}) do
+      eq(granted[scope], true); eq(ordinary[scope], nil)
+   end
+   eq(granted["future.unknown"], nil)
+   local wire = '{"id":"00000000000000000000000000000000","client_id":"synthetic-response-client","client_name":"Synthetic response only","scopes":["identity.read","live.queue.stage","live.rename"],"expires_at":1}'
+   local decoded = assert(response(200, wire):decode())
+   local typed = assert(b.models.OAuthGrant(decoded))
+   deep(typed.scopes, array({"identity.read", "live.queue.stage", "live.rename"}))
+   deep(assert(http.decode_body(json.encode(typed))), decoded)
 end
 
 function TestSDK.testRESTExactHeadersStreamingEncodingAndBoundedDecode()
