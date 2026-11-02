@@ -1,9 +1,9 @@
 rockspec_format = "3.0"
 package = "bibleit"
-version = "0.0.1-1"
+version = "0.0.2-1"
 source = {
    url = "git+https://github.com/bibleit-labs/bibleit-lua.git",
-   tag = "v0.0.1",
+   tag = "v0.0.2",
 }
 description = {
    summary = "Bring Bibleit’s Bible reading and live Scripture sharing into your Lua applications.",
