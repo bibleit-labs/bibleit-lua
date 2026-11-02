@@ -83,6 +83,7 @@ return {
    ["rotateServiceToken"] = { ["method"] = "POST", ["parameters"] = setmetatable({ "organization_id", "credential_id" }, array_mt), ["path"] = "/organizations/{organization_id}/service-tokens/{credential_id}/rotations", ["summary"] = "Rotate a service-token secret" },
    ["searchPersonalScripture"] = { ["method"] = "GET", ["parameters"] = setmetatable({ "account_id", "slug" }, array_mt), ["path"] = "/accounts/{account_id}/translations/{slug}/search", ["summary"] = "Search personal account scripture" },
    ["searchScripture"] = { ["method"] = "GET", ["parameters"] = setmetatable({ "organization_id", "slug" }, array_mt), ["path"] = "/organizations/{organization_id}/translations/{slug}/search", ["summary"] = "Search organization scripture" },
+   ["stageLiveQueueItem"] = { ["method"] = "POST", ["parameters"] = setmetatable({ "live_id" }, array_mt), ["path"] = "/lives/{live_id}/queue-items/staged", ["summary"] = "Stage a scripture queue item while stopped" },
    ["updateLiveMetadata"] = { ["method"] = "PATCH", ["parameters"] = setmetatable({ "live_id" }, array_mt), ["path"] = "/lives/{live_id}", ["summary"] = "Edit Live metadata" },
    ["updateLivePlayback"] = { ["method"] = "PATCH", ["parameters"] = setmetatable({ "live_id" }, array_mt), ["path"] = "/lives/{live_id}/playback", ["summary"] = "Update Live playback state" },
    ["updateLiveSettings"] = { ["method"] = "PATCH", ["parameters"] = setmetatable({ "live_id" }, array_mt), ["path"] = "/lives/{live_id}/settings", ["summary"] = "Update retained reference and translations" },

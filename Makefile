@@ -3,12 +3,18 @@ LUAROCKS ?= luarocks
 VERSION ?= 0.0.1
 ROCKSPEC = bibleit-$(VERSION)-1.rockspec
 
-.PHONY: init test-deps test check package publish
+.PHONY: init test-deps test check package publish generate generated-check
 init:
 	$(LUAROCKS) --tree ./lua_modules init bibleit $(VERSION) --no-gitignore --output $(ROCKSPEC)
 
 test-deps:
 	$(LUAROCKS) --tree ./lua_modules show luaunit 3.5-1 > /dev/null 2>&1 || $(LUAROCKS) --tree ./lua_modules install luaunit 3.5-1
+
+generate: ## Regenerate metadata from the pinned public contract.
+	$(LUA) tools/generate-contract.lua
+
+generated-check: ## Fail if generated metadata differs from the contract.
+	$(LUA) tools/generate-contract.lua --check
 
 test:
 	$(LUA) tests/sdk_test.lua $(TEST_ARGS)
@@ -16,6 +22,7 @@ test:
 check:
 	$(LUAROCKS) lint $(ROCKSPEC)
 	$(LUAROCKS) --tree ./lua_modules make $(ROCKSPEC)
+	$(LUA) tools/generate-contract.lua --check
 	$(LUAROCKS) --tree ./lua_modules test
 
 package: check

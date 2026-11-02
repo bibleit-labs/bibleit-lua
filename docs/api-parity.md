@@ -6,7 +6,7 @@ The entries below have Lua implementations. REST bindings are checked against th
 contract; schemas retain their wire metadata; helper families have fixture tests.
 Lua names use snake_case and wire operation IDs remain unchanged. See [API usage](api.md).
 
-## REST operations (88)
+## REST operations (89)
 
 | Operation ID | HTTP | Path | Status |
 | --- | --- | --- | --- |
@@ -92,6 +92,7 @@ Lua names use snake_case and wire operation IDs remain unchanged. See [API usage
 | `rotateServiceToken` | POST | `/organizations/{organization_id}/service-tokens/{credential_id}/rotations` | Implemented |
 | `searchPersonalScripture` | GET | `/accounts/{account_id}/translations/{slug}/search` | Implemented |
 | `searchScripture` | GET | `/organizations/{organization_id}/translations/{slug}/search` | Implemented |
+| `stageLiveQueueItem` | POST | `/lives/{live_id}/queue-items/staged` | Implemented |
 | `updateLiveMetadata` | PATCH | `/lives/{live_id}` | Implemented |
 | `updateLivePlayback` | PATCH | `/lives/{live_id}/playback` | Implemented |
 | `updateLiveSettings` | PATCH | `/lives/{live_id}/settings` | Implemented |
@@ -192,7 +193,7 @@ the schema representations below. Go-specific methods need documented Lua equiva
 | `Client.ReadPersonalBookPages` | `read_personal_book_pages` |
 | `Client.ReadBookPages` | `read_book_pages` |
 
-## Schema representations (105)
+## Schema representations (111)
 
 Wire fields, nullability, enums and union semantics are represented through Lua
 tables and schema metadata; generated Go conversion helpers map to the documented
@@ -241,13 +242,19 @@ Lua constructor/union helpers.
 | `LiveSubscriber` | Implemented |
 | `LiveSummary` | Implemented |
 | `LiveWorkspacePut` | Implemented |
+| `McpOAuthMetadata` | Implemented |
+| `McpOAuthProbe` | Implemented |
+| `McpOAuthProbeError` | Implemented |
+| `McpOAuthScope` | Implemented |
 | `Membership` | Implemented |
 | `MembershipPage` | Implemented |
 | `MembershipPatch` | Implemented |
 | `OAuthError` | Implemented |
 | `OAuthGrant` | Implemented |
 | `OAuthGrantList` | Implemented |
+| `OAuthGrantedScope` | Implemented |
 | `OAuthMetadata` | Implemented |
+| `OAuthResourceError` | Implemented |
 | `OAuthScope` | Implemented |
 | `OAuthToken` | Implemented |
 | `Organization` | Implemented |
