@@ -8922,7 +8922,7 @@
         "x-required-scopes": [
           "broadcast.get"
         ],
-        "description": "**Required token scope ceiling:** `broadcast.get`.\n\nPersonal bt_ tokens only. Requires the current workspace role/approval and the indicated personal token scope ceiling. Service tokens and delegated OAuth grants are not accepted. Shared server permissions are rechecked after waits. No provider credentials, ingestion addresses or capture capabilities are returned.",
+        "description": "**Required token scope ceiling:** `broadcast.get`.\n\nPersonal bt_ tokens only. Requires the current workspace role/approval and the indicated personal token scope ceiling. Service tokens and delegated OAuth grants are not accepted. Shared server permissions are rechecked after waits. No provider credentials, ingestion addresses or capture capabilities are returned.\n\nThe `ETag` response header is the current strong resource revision validator; retain it unchanged for supported If-Match writes.",
         "responses": {
           "200": {
             "description": "Shared broadcast control-plane result",
@@ -9398,7 +9398,7 @@
         "x-required-scopes": [
           "broadcast.get"
         ],
-        "description": "**Required token scope ceiling:** `broadcast.get`.\n\nPersonal bt_ tokens only. Requires the current workspace role/approval and the indicated personal token scope ceiling. Service tokens and delegated OAuth grants are not accepted. Shared server permissions are rechecked after waits. No provider credentials, ingestion addresses or capture capabilities are returned.",
+        "description": "**Required token scope ceiling:** `broadcast.get`.\n\nPersonal bt_ tokens only. Requires the current workspace role/approval and the indicated personal token scope ceiling. Service tokens and delegated OAuth grants are not accepted. Shared server permissions are rechecked after waits. No provider credentials, ingestion addresses or capture capabilities are returned.\n\nThe `ETag` response header is the current strong resource revision validator; retain it unchanged for supported If-Match writes.",
         "responses": {
           "200": {
             "description": "Shared broadcast control-plane result",
@@ -9706,7 +9706,7 @@
         "x-required-scopes": [
           "broadcast.get"
         ],
-        "description": "**Required token scope ceiling:** `broadcast.get`.\n\nPersonal bt_ tokens only. Requires the current workspace role/approval and the indicated personal token scope ceiling. Service tokens and delegated OAuth grants are not accepted. Shared server permissions are rechecked after waits. No provider credentials, ingestion addresses or capture capabilities are returned.",
+        "description": "**Required token scope ceiling:** `broadcast.get`.\n\nPersonal bt_ tokens only. Requires the current workspace role/approval and the indicated personal token scope ceiling. Service tokens and delegated OAuth grants are not accepted. Shared server permissions are rechecked after waits. No provider credentials, ingestion addresses or capture capabilities are returned.\n\nThe `ETag` response header is the current strong resource revision validator; retain it unchanged for supported If-Match writes.",
         "responses": {
           "200": {
             "description": "Shared broadcast control-plane result",
@@ -9981,7 +9981,7 @@
         "x-required-scopes": [
           "broadcast.get"
         ],
-        "description": "**Required token scope ceiling:** `broadcast.get`.\n\nPersonal bt_ tokens only. Requires the current workspace role/approval and the indicated personal token scope ceiling. Service tokens and delegated OAuth grants are not accepted. Shared server permissions are rechecked after waits. No provider credentials, ingestion addresses or capture capabilities are returned.",
+        "description": "**Required token scope ceiling:** `broadcast.get`.\n\nPersonal bt_ tokens only. Requires the current workspace role/approval and the indicated personal token scope ceiling. Service tokens and delegated OAuth grants are not accepted. Shared server permissions are rechecked after waits. No provider credentials, ingestion addresses or capture capabilities are returned.\n\nThe `ETag` response header is the current strong resource revision validator; retain it unchanged for supported If-Match writes.",
         "responses": {
           "200": {
             "description": "Shared broadcast control-plane result",
