@@ -488,7 +488,7 @@ function TestSDK.testRootConstructorsExposeDistinctResourceSSHAndAuthorizationCl
 end
 
 function TestSDK.testBroadcastBuildersAndCallerOwnedExecutor()
-   local id = "2495e5de-3083-4963-959c-f632254c58b4"
+   local id = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
    local hash = string.rep("a", 64)
    local cases = {
       {"setup_list", {id}, "setup list"},
@@ -566,7 +566,7 @@ function TestSDK.testBroadcastLifecycleProjectionValidation()
 end
 
 function TestSDK.testBroadcastRESTPreservesSignedBytesAndErrorSemantics()
-   local id = "2495e5de-3083-4963-959c-f632254c58b4"
+   local id = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
    local body = '{ "version": 1, "name": "Exact bytes" }\n'
    local calls = 0
    local client = assert(b.new_client("bt_fixture",function(req)
