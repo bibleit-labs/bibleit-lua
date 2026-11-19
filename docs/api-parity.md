@@ -214,7 +214,7 @@ the schema representations below. Go-specific methods need documented Lua equiva
 | `Client.ReadPersonalBookPages` | `read_personal_book_pages` |
 | `Client.ReadBookPages` | `read_book_pages` |
 
-## Schema representations (105)
+## Schema representations (111)
 
 Wire fields, nullability, enums and union semantics are represented through Lua
 tables and schema metadata; generated Go conversion helpers map to the documented
@@ -263,13 +263,19 @@ Lua constructor/union helpers.
 | `LiveSubscriber` | Implemented |
 | `LiveSummary` | Implemented |
 | `LiveWorkspacePut` | Implemented |
+| `McpOAuthMetadata` | Implemented |
+| `McpOAuthProbe` | Implemented |
+| `McpOAuthProbeError` | Implemented |
+| `McpOAuthScope` | Implemented |
 | `Membership` | Implemented |
 | `MembershipPage` | Implemented |
 | `MembershipPatch` | Implemented |
 | `OAuthError` | Implemented |
 | `OAuthGrant` | Implemented |
 | `OAuthGrantList` | Implemented |
+| `OAuthGrantedScope` | Implemented |
 | `OAuthMetadata` | Implemented |
+| `OAuthResourceError` | Implemented |
 | `OAuthScope` | Implemented |
 | `OAuthToken` | Implemented |
 | `Organization` | Implemented |
@@ -339,7 +345,7 @@ Wire framing differs; identity checks, revisions, retained request identifiers,
 durable outcomes and browser requirements remain the shared server contract.
 `decode_broadcast_lifecycle` preserves nullable values and unknown projection fields.
 
-Refresh metadata with `python3 tools/generate_contract.py [server-openapi-path]`.
-The optional path updates the canonical snapshot before regenerating. SDK tests
+Refresh the canonical snapshot from the server OpenAPI, then run `make generate`.
+`make generated-check` checks the committed metadata against that snapshot. SDK tests
 check every pinned REST operation/schema, all broadcast SSH commands, exact raw
 body uploads, cancellation and absence of automatic retry on uncertain outcomes.

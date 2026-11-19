@@ -1,9 +1,9 @@
 # Release through LuaRocks CLI
 
-The Lua SDK starts at **0.0.1**, independently of Go SDK versions.
-Package: `bibleit`; Git tag: `v0.0.1`; LuaRocks version: `0.0.1-1`.
+Release version: **0.0.2**, independently of Go SDK versions.
+Package: `bibleit`; Git tag: `v0.0.2`; LuaRocks version: `0.0.2-1`.
 
-`bibleit-0.0.1-1.rockspec` is the package specification. LuaRocks requires the
+`bibleit-0.0.2-1.rockspec` is the package specification. LuaRocks requires the
 `name-version-revision.rockspec` filename and discovers it at the repository
 root. Users install `bibleit`. Use LuaRocks 3.13+ for development and releases.
 
@@ -11,9 +11,9 @@ root. Users install `bibleit`. Use LuaRocks 3.13+ for development and releases.
 
 1. Run `make check` (all SDK/TLS tests through LuaRocks) and the runtime CI matrix.
 2. Review the changelog, notices, API inventory and public documentation.
-3. Run `luarocks lint bibleit-0.0.1-1.rockspec`.
+3. Run `luarocks lint bibleit-0.0.2-1.rockspec`.
 4. Commit the source and working specification. Tag the reviewed commit
-   `v0.0.1` and push the commit and tag. The source tag must be publicly fetchable.
+   `v0.0.2` and push the commit and tag. The source tag must be publicly fetchable.
    Keep published tags immutable.
 
 `make package` builds an installable `.all.rock` archive from the current checkout
@@ -34,7 +34,7 @@ Set `LUAROCKS_API_KEY` in the environment or a CI secret. An ignored `.env` file
 can store the key locally; load it into your environment before running:
 
 ```sh
-make publish VERSION=0.0.1
+make publish VERSION=0.0.2
 ```
 
 The target runs the checks, packs the public source tag, and calls the LuaRocks
@@ -45,8 +45,8 @@ For manual CLI publishing, after reviewing and testing the archive:
 
 ```sh
 mkdir -p dist
-(cd dist && luarocks pack ../bibleit-0.0.1-1.rockspec)
-luarocks upload bibleit-0.0.1-1.rockspec dist/bibleit-0.0.1-1.src.rock \
+(cd dist && luarocks pack ../bibleit-0.0.2-1.rockspec)
+luarocks upload bibleit-0.0.2-1.rockspec dist/bibleit-0.0.2-1.src.rock \
   --temp-key "$LUAROCKS_API_KEY"
 ```
 

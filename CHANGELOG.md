@@ -1,17 +1,26 @@
 # Changelog
 
-## Unreleased
+## 0.0.2
+
+- Separate owner-grant response `OAuthGrantedScope` from ordinary request
+  `OAuthScope`. Response metadata includes MCP-only `live.queue.stage` and
+  `live.rename`; ordinary request scope metadata remains unchanged.
+- Refresh the pinned public contract and inventory to 89 REST bindings and 111
+  schemas, including MCP issuer metadata and probe response definitions. Lua
+  constructors retain the same wire table shape and do not confer permissions
+  or perform runtime schema validation.
+- Add reproducible Lua-native contract generation and an exact regeneration gate.
+- Publish tagged source releases through GitHub Actions and expand the package
+  description to describe Bibleit reading and sharing workflows.
+
+## 0.0.1
 
 - Use a standard root rockspec filename so bare `luarocks test` discovers it.
-
 - Run SDK and TLS tests together through `luarocks test`, using LuaUnit.
 - Use LuaUnit and native LuaRocks commands; remove custom tooling.
 - Use dkjson directly as the sole JSON dependency; remove the SDK JSON module
   and public export. JSON values use the library's native representations.
 - Preserve SSH integers outside the safe numeric range as decimal strings.
-
-## 0.0.1
-
 - Expose resource operations through `bibleit.new_client` and SSH helpers through
   `bibleit.new_ssh_client`, keeping transport implementations internal.
 - Implement all 88 resource REST operations and metadata/constructors for 105 schemas.
