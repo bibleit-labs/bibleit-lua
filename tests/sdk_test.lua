@@ -127,7 +127,7 @@ function TestSDK.testAllRESTOperationsAndSchemasMatchContract()
       deep(assert(http.decode_body(json.encode(metadata))), schema)
       assert(type(b.models[name]) == "function")
    end
-   eq(count, 138); eq(#b.models.names(), count)
+   eq(count, 139); eq(#b.models.names(), count)
    operations.getLive.path = "/bad"; eq(b.operations().getLive.path, "/lives/{live_id}")
 end
 

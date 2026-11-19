@@ -9213,6 +9213,7 @@
           }
         ],
         "x-required-scopes": [
+          "broadcast.create",
           "broadcast.manage"
         ],
         "description": "Personal bt_ tokens only. Requires the current workspace role/approval and the indicated personal token scope ceiling. Service tokens and delegated OAuth grants are not accepted. Shared server permissions are rechecked after waits. No provider credentials, ingestion addresses or capture capabilities are returned. The token ceiling is broadcast.create for create/duplicate intents, broadcast.manage for save/delete intents; the matching workspace create/update/delete permission is mandatory.",
@@ -9249,7 +9250,8 @@
               }
             }
           }
-        }
+        },
+        "x-scope-policy": "operation-dependent; create/duplicate: broadcast.create; save/delete: broadcast.manage"
       }
     },
     "/organizations/{organization_id}/broadcast/write-requests/{request_id}": {
@@ -9286,6 +9288,7 @@
           }
         ],
         "x-required-scopes": [
+          "broadcast.create",
           "broadcast.manage"
         ],
         "description": "Personal bt_ tokens only. Requires the current workspace role/approval and the indicated personal token scope ceiling. Service tokens and delegated OAuth grants are not accepted. Shared server permissions are rechecked after waits. No provider credentials, ingestion addresses or capture capabilities are returned. Requires broadcast.create for create/duplicate tickets, broadcast.manage for save/delete tickets; current corresponding workspace authority is mandatory. Status may be read after expiry to reconcile a retained receipt.",
@@ -9312,7 +9315,8 @@
           }
         },
         "x-fern-server-name": "rest",
-        "x-fern-explorer": false
+        "x-fern-explorer": false,
+        "x-scope-policy": "operation-dependent; create/duplicate: broadcast.create; save/delete: broadcast.manage"
       }
     },
     "/organizations/{organization_id}/broadcast/profiles": {
@@ -9823,7 +9827,8 @@
               }
             }
           }
-        }
+        },
+        "x-scope-policy": "state-dependent; testing/live: broadcast.publish; complete: broadcast.manage"
       }
     },
     "/organizations/{organization_id}/broadcast/operations/{operation_id}": {
@@ -16411,6 +16416,35 @@
           },
           "madeForKids": {
             "type": "boolean"
+          },
+          "thumbnail": {
+            "$ref": "#/components/schemas/BroadcastThumbnailInput"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 250
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "license": {
+            "type": "string",
+            "enum": [
+              "youtube",
+              "creativeCommon"
+            ]
+          },
+          "embeddable": {
+            "type": "boolean"
+          },
+          "publicStatsViewable": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -16542,6 +16576,27 @@
           "data"
         ],
         "additionalProperties": false
+      },
+      "BroadcastThumbnailInput": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "default",
+              "asset"
+            ]
+          },
+          "assetId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{32}$"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "additionalProperties": false,
+        "description": "default uses the connected channel image; asset requires an organization-owned image assetId."
       }
     },
     "responses": {
@@ -16651,6 +16706,10 @@
     {
       "name": "Live events",
       "description": "Versioned operator snapshots through bounded bearer-authenticated HTTP long polling. Separate from audience subscriptions."
+    },
+    {
+      "name": "Broadcast Studio",
+      "description": "Personal operator control plane with current workspace authority. Browser capture and Google consent remain browser-only."
     }
   ],
   "x-fern-explorer": false
