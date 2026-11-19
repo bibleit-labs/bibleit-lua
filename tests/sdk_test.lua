@@ -597,5 +597,17 @@ function TestSDK.testBroadcastRESTPreservesSignedBytesAndErrorSemantics()
    for _, bad in ipairs({"Zg=","Zg===","Zg==AAAA","Zh==","Zm9=","Zg==\n","===="}) do eq(codec.unb64(bad),nil) end
 end
 
+function TestSDK.testBroadcastExactRevisionUsesETagBeyondPortableIntegerRange()
+   local id="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+   local result=response(200,'{"revision":9223372036854775807}',{etag='"setup-9223372036854775807"'})
+   local decoded=assert(result:decode())
+   -- Older runtimes round this JSON number. A numeric revision must therefore
+   -- never pass through the cross-runtime broadcast constructor silently.
+   fails(function() return b.broadcast_setup_document_command(id,id,decoded.revision,0) end,"validation")
+   local exact=result.headers.etag:match('^"setup%-(%d+)"$')
+   local cmd=assert(b.broadcast_setup_document_command(id,id,exact,0))
+   eq(cmd:string(),"broadcast "..id.." setup "..id.." document 9223372036854775807 0")
+end
+
 require("tests.https")
 os.exit(lu.LuaUnit.run())
