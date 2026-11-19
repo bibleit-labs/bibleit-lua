@@ -6,11 +6,15 @@ The entries below have Lua implementations. REST bindings are checked against th
 contract; schemas retain their wire metadata; helper families have fixture tests.
 Lua names use snake_case and wire operation IDs remain unchanged. See [API usage](api.md).
 
-## REST operations (88)
+## REST operations (110)
 
 | Operation ID | HTTP | Path | Status |
 | --- | --- | --- | --- |
+| `attachBroadcastEvent` | POST | `/organizations/{organization_id}/broadcast/events/attach` | Implemented |
 | `clearLiveStack` | DELETE | `/lives/{live_id}/stack` | Implemented |
+| `createBroadcastEvent` | POST | `/organizations/{organization_id}/broadcast/events` | Implemented |
+| `createBroadcastSetup` | POST | `/organizations/{organization_id}/broadcast/setups` | Implemented |
+| `createBroadcastWriteRequest` | POST | `/organizations/{organization_id}/broadcast/write-requests` | Implemented |
 | `createLive` | POST | `/organizations/{organization_id}/lives` | Implemented |
 | `createLiveAudienceSecret` | POST | `/lives/{live_id}/audience-secret` | Implemented |
 | `createLiveQueueItem` | POST | `/lives/{live_id}/queue-items` | Implemented |
@@ -18,6 +22,7 @@ Lua names use snake_case and wire operation IDs remain unchanged. See [API usage
 | `createPresentation` | POST | `/organizations/{organization_id}/presentations` | Implemented |
 | `createPresentationExport` | POST | `/presentations/{presentation_id}/exports` | Implemented |
 | `createServiceToken` | POST | `/organizations/{organization_id}/service-tokens` | Implemented |
+| `deleteBroadcastSetup` | DELETE | `/organizations/{organization_id}/broadcast/setups/{setup_id}` | Implemented |
 | `deleteLive` | DELETE | `/lives/{live_id}` | Implemented |
 | `deleteLiveAudienceSecret` | DELETE | `/lives/{live_id}/audience-secret` | Implemented |
 | `deleteLiveQueueItem` | DELETE | `/lives/{live_id}/queue-items/{item_id}` | Implemented |
@@ -28,8 +33,16 @@ Lua names use snake_case and wire operation IDs remain unchanged. See [API usage
 | `disableOrganizationTranslation` | DELETE | `/organizations/{organization_id}/translations/{slug}` | Implemented |
 | `disablePersonalTranslation` | DELETE | `/accounts/{account_id}/translations/{slug}` | Implemented |
 | `downloadPresentationExport` | POST | `/presentations/{presentation_id}/exports/{export_id}/downloads` | Implemented |
+| `duplicateBroadcastSetup` | POST | `/organizations/{organization_id}/broadcast/setups/{setup_id}/duplicate` | Implemented |
 | `enableOrganizationTranslation` | PUT | `/organizations/{organization_id}/translations/{slug}` | Implemented |
 | `enablePersonalTranslation` | PUT | `/accounts/{account_id}/translations/{slug}` | Implemented |
+| `getBroadcastChannel` | GET | `/organizations/{organization_id}/broadcast/channel` | Implemented |
+| `getBroadcastEvent` | GET | `/organizations/{organization_id}/broadcast/events/{event_id}` | Implemented |
+| `getBroadcastOperation` | GET | `/organizations/{organization_id}/broadcast/operations/{operation_id}` | Implemented |
+| `getBroadcastPreflight` | GET | `/organizations/{organization_id}/broadcast/preflight` | Implemented |
+| `getBroadcastPublisher` | GET | `/organizations/{organization_id}/broadcast/publishers/{publisher_id}` | Implemented |
+| `getBroadcastSetup` | GET | `/organizations/{organization_id}/broadcast/setups/{setup_id}` | Implemented |
+| `getBroadcastWriteRequest` | GET | `/organizations/{organization_id}/broadcast/write-requests/{request_id}` | Implemented |
 | `getLive` | GET | `/lives/{live_id}` | Implemented |
 | `getLiveDisplay` | GET | `/lives/{live_id}/display` | Implemented |
 | `getLiveEvents` | GET | `/lives/{live_id}/events` | Implemented |
@@ -58,6 +71,10 @@ Lua names use snake_case and wire operation IDs remain unchanged. See [API usage
 | `getTranslationCatalogueDetails` | GET | `/translations/{slug}/catalogue` | Implemented |
 | `importPresentation` | POST | `/organizations/{organization_id}/presentation-imports` | Implemented |
 | `listBooks` | GET | `/books` | Implemented |
+| `listBroadcastEvents` | GET | `/organizations/{organization_id}/broadcast/events` | Implemented |
+| `listBroadcastOutputProfiles` | GET | `/organizations/{organization_id}/broadcast/profiles` | Implemented |
+| `listBroadcastPublishers` | GET | `/organizations/{organization_id}/broadcast/publishers` | Implemented |
+| `listBroadcastSetups` | GET | `/organizations/{organization_id}/broadcast/setups` | Implemented |
 | `listLiveQueueItems` | GET | `/lives/{live_id}/queue-items` | Implemented |
 | `listLives` | GET | `/organizations/{organization_id}/lives` | Implemented |
 | `listOAuthGrants` | GET | `/me/oauth-grants` | Implemented |
@@ -82,16 +99,21 @@ Lua names use snake_case and wire operation IDs remain unchanged. See [API usage
 | `readPersonalChapter` | GET | `/accounts/{account_id}/translations/{slug}/books/{book_id}/chapters/{chapter}` | Implemented |
 | `readPersonalVerse` | GET | `/accounts/{account_id}/translations/{slug}/books/{book_id}/chapters/{chapter}/verses/{verse}` | Implemented |
 | `readVerse` | GET | `/organizations/{organization_id}/translations/{slug}/books/{book_id}/chapters/{chapter}/verses/{verse}` | Implemented |
+| `replaceBroadcastSetup` | PUT | `/organizations/{organization_id}/broadcast/setups/{setup_id}` | Implemented |
 | `replaceLiveDisplay` | PUT | `/lives/{live_id}/display` | Implemented |
 | `replaceLiveQueueOrder` | PUT | `/lives/{live_id}/queue-items/order` | Implemented |
 | `replaceOrganizationLiveStudio` | PUT | `/organizations/{organization_id}/live-studio` | Implemented |
 | `replacePresentation` | PUT | `/presentations/{presentation_id}` | Implemented |
+| `requestBroadcastTakeover` | POST | `/organizations/{organization_id}/broadcast/takeover` | Implemented |
 | `revokeOAuthGrant` | DELETE | `/me/oauth-grants/{grant_id}` | Implemented |
 | `revokeServiceToken` | DELETE | `/organizations/{organization_id}/service-tokens/{credential_id}` | Implemented |
 | `rotateLiveAudienceSecret` | PUT | `/lives/{live_id}/audience-secret` | Implemented |
 | `rotateServiceToken` | POST | `/organizations/{organization_id}/service-tokens/{credential_id}/rotations` | Implemented |
 | `searchPersonalScripture` | GET | `/accounts/{account_id}/translations/{slug}/search` | Implemented |
 | `searchScripture` | GET | `/organizations/{organization_id}/translations/{slug}/search` | Implemented |
+| `stageLiveQueueItem` | POST | `/lives/{live_id}/queue-items/staged` | Implemented |
+| `stopBroadcastPublisher` | POST | `/organizations/{organization_id}/broadcast/publishers/{publisher_id}/stop` | Implemented |
+| `transitionBroadcastEvent` | POST | `/organizations/{organization_id}/broadcast/events/{event_id}/transitions` | Implemented |
 | `updateLiveMetadata` | PATCH | `/lives/{live_id}` | Implemented |
 | `updateLivePlayback` | PATCH | `/lives/{live_id}/playback` | Implemented |
 | `updateLiveSettings` | PATCH | `/lives/{live_id}/settings` | Implemented |
@@ -305,3 +327,19 @@ Lua constructor/union helpers.
 | `TranslationProvenance` | Implemented |
 | `TranslationRights` | Implemented |
 | `Verse` | Implemented |
+
+## Broadcast control-plane parity
+
+All 21 public REST broadcast operations and their named schemas are generated
+from the canonical contract. SSH builders and executor methods cover Setup
+list/get/document, signed write intent/begin/inspect/chunk/commit/status/abort,
+profiles/channel/preflight/events/publishers, individual event/operation/publisher
+reads, event create/attach/transition, publisher stop and browser-required takeover.
+Wire framing differs; identity checks, revisions, retained request identifiers,
+durable outcomes and browser requirements remain the shared server contract.
+`decode_broadcast_lifecycle` preserves nullable values and unknown projection fields.
+
+Refresh metadata with `python3 tools/generate_contract.py [server-openapi-path]`.
+The optional path updates the canonical snapshot before regenerating. SDK tests
+check every pinned REST operation/schema, all broadcast SSH commands, exact raw
+body uploads, cancellation and absence of automatic retry on uncertain outcomes.

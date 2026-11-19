@@ -95,7 +95,7 @@ function TestSDK.testSSHCommandQuotingValidationEnumsAndFiniteFraming()
    fails(function() return b.decode_response('OK text="' .. string.rep("x", 2097152) .. '"\n') end)
 end
 
-function TestSDK.testAll88RESTOperationsAnd105SchemasMatchContract()
+function TestSDK.testAllRESTOperationsAndSchemasMatchContract()
    local operations = b.operations(); local operation_count = 0
    for path, item in pairs(spec.paths) do
       for method, op in pairs(item) do
@@ -118,7 +118,7 @@ function TestSDK.testAll88RESTOperationsAnd105SchemasMatchContract()
          end
       end
    end
-   eq(operation_count, 88); eq(#b.operation_names(), 88)
+   eq(operation_count, 110); eq(#b.operation_names(), operation_count)
    local count = 0
    for name, schema in pairs(spec.components.schemas) do
       count = count + 1
@@ -127,7 +127,7 @@ function TestSDK.testAll88RESTOperationsAnd105SchemasMatchContract()
       deep(assert(http.decode_body(json.encode(metadata))), schema)
       assert(type(b.models[name]) == "function")
    end
-   eq(count, 105); eq(#b.models.names(), 105)
+   eq(count, 138); eq(#b.models.names(), count)
    operations.getLive.path = "/bad"; eq(b.operations().getLive.path, "/lives/{live_id}")
 end
 
@@ -468,6 +468,116 @@ function TestSDK.testRootConstructorsExposeDistinctResourceSSHAndAuthorizationCl
    eq(assert(b.new_oauth_client()).get_personal_identity, nil)
    local alias = assert(b.new_client_with_http_client(""))
    assert(type(alias.get_personal_identity) == "function")
+end
+
+function TestSDK.testBroadcastBuildersAndCallerOwnedExecutor()
+   local id = "2495e5de-3083-4963-959c-f632254c58b4"
+   local hash = string.rep("a", 64)
+   local cases = {
+      {"setup_list", {id}, "setup list"},
+      {"setup_list", {id, 99, id}, "setup list 99 " .. id},
+      {"setup_get", {id,id}, "setup " .. id .. " get"},
+      {"setup_document", {id,id,"9223372036854775807",0}, "setup " .. id .. " document 9223372036854775807 0"},
+      {"write_intent", {id,"create","new",0,2,hash}, "write intent create new 0 2 " .. hash},
+      {"write_intent", {id,"save",id,1,2,hash}, "write intent save " .. id .. " 1 2 " .. hash},
+      {"write_begin", {id,"ticket"}, "write begin ticket"},
+      {"write_status", {id,"ticket"}, "write status ticket"},
+      {"write_inspect", {id,id}, "write inspect " .. id},
+      {"write_abort", {id,id}, "write abort " .. id},
+      {"write_chunk", {id,id,0,"e30="}, "write chunk " .. id .. " 0 e30="},
+      {"write_commit", {id,"ticket",id}, "write commit ticket " .. id},
+      {"event_create", {id,id,"e30="}, "event create " .. id .. " e30="},
+      {"event_attach", {id,id,"YouTube_id-1"}, "event attach " .. id .. " YouTube_id-1"},
+      {"event_transition", {id,id,"go-live",1,id}, "event " .. id .. " go-live 1 " .. id},
+      {"publisher_stop", {id,id,1}, "publisher " .. id .. " stop 1"},
+   }
+   for _, name in ipairs({"profiles","channel","preflight","events","publishers","takeover"}) do
+      cases[#cases+1] = {name,{id},name}
+   end
+   for _, name in ipairs({"event","publisher","operation"}) do
+      cases[#cases+1] = {name .. "_get",{id,id},name .. " " .. id .. " get"}
+   end
+   local calls, expected = 0
+   local client = assert(b.new_ssh_client(function(cmd)
+      calls = calls + 1; eq(cmd:string(), expected); return "OK accepted=true\n"
+   end))
+   for _, case in ipairs(cases) do
+      expected = "broadcast " .. id .. " " .. case[3]
+      eq(assert(b["broadcast_" .. case[1] .. "_command"]((table.unpack or unpack)(case[2]))):string(), expected)
+      assert(client["broadcast_" .. case[1]](client, (table.unpack or unpack)(case[2])))
+   end
+   eq(calls, #cases)
+   eq(assert(b.help_command("broadcast")):string(), "HELP BROADCAST")
+   fails(function() return b.broadcast_channel_command(id:upper()) end, "validation")
+   fails(function() return b.broadcast_setup_list_command(id,100) end, "validation")
+   fails(function() return b.broadcast_setup_document_command(id,id,"9223372036854775808",0) end, "validation")
+   fails(function() return b.broadcast_setup_document_command(id,id,9007199254740992,0) end, "validation")
+   fails(function() return b.broadcast_write_intent_command(id,"create",id,0,2,hash) end, "validation")
+   fails(function() return b.broadcast_write_intent_command(id,"save",id,0,2,hash) end, "validation")
+   fails(function() return b.broadcast_write_chunk_command(id,id,0,"e31=") end, "validation")
+   fails(function() return b.broadcast_write_chunk_command(id,id,0,require("bibleit.internal.base64").b64(string.rep("a",3073))) end, "validation")
+   fails(function() return b.broadcast_write_status_command(id,"ticket\nPING") end, "validation")
+   fails(function() return b.broadcast_event_attach_command(id,id,"https://youtube.com/id") end, "validation")
+   fails(function() return b.broadcast_event_create_command(id,id,"W10=") end,"validation")
+   fails(function() return b.broadcast_event_create_command(id,id,"bnVsbA==") end,"validation")
+   fails(function() return b.broadcast_event_create_command(id,id,"bm90LWpzb24=") end,"validation")
+   fails(function() return b.broadcast_event_transition_command(id,id,"start",1,id) end, "validation")
+   local context = b.context.new(); context:cancel()
+   fails(function() return client:broadcast_channel(id,context) end)
+   eq(calls,#cases)
+   local once = 0
+   client = assert(b.new_ssh_client(function() once=once+1; return "ERR uncertain_outcome\n" end))
+   local err = fails(function() return client:broadcast_write_commit(id,"ticket",id) end,"server")
+   eq(err.code,"uncertain_outcome"); eq(once,1)
+end
+
+function TestSDK.testBroadcastLifecycleProjectionValidation()
+   local function fields(value, kind)
+      local bytes = json.encode({value=value})
+      return "document_format=broadcast-lifecycle-json-v1 record_type=" .. (kind or "channel") ..
+         " bytes=" .. #bytes .. " data_base64=" .. require("bibleit.internal.base64").b64(bytes)
+   end
+   local decoded = assert(b.decode_broadcast_lifecycle(assert(b.decode_response("OK " .. fields(json.null) .. "\n")),"channel"))
+   eq(decoded.value,json.null)
+   local wire = "OK count=1\nYOUTUBE_EVENT " .. fields({id="event",future_field=true},"event") .. "\nEND\n"
+   decoded = assert(b.decode_broadcast_lifecycle(assert(b.decode_response(wire)),"event"))
+   eq(decoded.values[1].future_field,true)
+   fails(function() return b.decode_broadcast_lifecycle(assert(b.decode_response(wire)),"publisher") end,"validation")
+   local response = assert(b.decode_response("OK " .. fields({id="event"},"event") .. "\n"))
+   response.records[1].fields.bytes = "1000001"
+   fails(function() return b.decode_broadcast_lifecycle(response,"event") end,"validation")
+end
+
+function TestSDK.testBroadcastRESTPreservesSignedBytesAndErrorSemantics()
+   local id = "2495e5de-3083-4963-959c-f632254c58b4"
+   local body = '{ "version": 1, "name": "Exact bytes" }\n'
+   local calls = 0
+   local client = assert(b.new_client("bt_fixture",function(req)
+      calls=calls+1
+      eq(req.method,"PUT"); eq(req.body,body); eq(req.content_length,#body)
+      eq(req.headers["Idempotency-Key"],"original-ticket")
+      eq(req.headers["If-Match"],'"setup-4"')
+      eq(req.headers["Content-Type"],"application/json")
+      return response(200,'{"request_id":"original-ticket","result_state":"applied","revision":5}')
+   end))
+   local result = assert(client:replace_broadcast_setup(id,id,{body=body,content_length=#body,
+      content_type="application/json",if_match='"setup-4"',idempotency_key="original-ticket"}))
+   eq(result:decode().revision,5); result:close(); eq(calls,1)
+   for _, code in ipairs({"browser_required","operation_conflict","request_expired","uncertain_outcome"}) do
+      calls=0
+      client=assert(b.new_client("bt_fixture",function()
+         calls=calls+1; return response(409,json.encode({code=code,request_id="retained"}))
+      end))
+      local err=fails(function() return client:request_broadcast_takeover(id,{json=object()}) end,"problem")
+      eq(err.code,code); eq(calls,1)
+   end
+   local nullable=assert(b.models.schema("BroadcastChannelResult"))
+   assert(nullable.anyOf)
+   local codec=require("bibleit.internal.base64")
+   for _, pair in ipairs({{"",""},{"f","Zg=="},{"fo","Zm8="},{"foo","Zm9v"},{"foob","Zm9vYg=="},{"fooba","Zm9vYmE="},{"foobar","Zm9vYmFy"}}) do
+      eq(codec.b64(pair[1]),pair[2]); eq(codec.unb64(pair[2]),pair[1])
+   end
+   for _, bad in ipairs({"Zg=","Zg===","Zg==AAAA","Zh==","Zm9=","Zg==\n","===="}) do eq(codec.unb64(bad),nil) end
 end
 
 require("tests.https")

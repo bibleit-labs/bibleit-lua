@@ -33,6 +33,7 @@ build = {
       ["bibleit.errors"] = "src/bibleit/errors.lua",
       ["bibleit.http"] = "src/bibleit/http.lua",
       ["bibleit"] = "src/bibleit/init.lua",
+      ["bibleit.internal.base64"] = "src/bibleit/internal/base64.lua",
       ["bibleit.internal.auth"] = "src/bibleit/internal/auth.lua",
       ["bibleit.internal.client"] = "src/bibleit/internal/client.lua",
       ["bibleit.internal.oauth"] = "src/bibleit/internal/oauth.lua",
