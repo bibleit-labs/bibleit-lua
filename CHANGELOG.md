@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0
+
+- Add all 21 Broadcast Studio REST operations and named models, synchronized
+  with the canonical server contract (110 REST operations and 139 schemas).
+- Add validated SSH Setup reads, signed-write transfer and durable receipt
+  commands, channel/preflight inspection, event lifecycle and publisher controls.
+- Preserve exact signed REST body bytes; document exact ETag revision handling
+  beyond Lua's portable integer range. Constructors reject unsafe numeric revisions.
+- Add bounded portable base64 and lifecycle projection decoding, preserving
+  nullable channels and unknown fields without automatic retries or credential storage.
+- Validate all supported Lua versions using checksum/commit-pinned upstream
+  toolchains and retain full TLS/package checks without Ubuntu mirror dependencies.
+
 ## 0.0.2
 
 - Separate owner-grant response `OAuthGrantedScope` from ordinary request

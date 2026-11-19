@@ -154,7 +154,7 @@ local function broadcast_number(value, minimum, maximum)
    return value
 end
 local function broadcast_ticket(value)
-   util.assert(type(value) == "string" and #value > 0 and #value <= 768, "invalid request ticket")
+   util.assert(type(value) == "string" and #value > 0 and #value <= 768 and value:match("^[A-Za-z0-9_-]+$"), "invalid request ticket")
    return value
 end
 local function broadcast_base64(value, maximum)

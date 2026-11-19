@@ -1,6 +1,6 @@
 LUA ?= lua
 LUAROCKS ?= luarocks
-VERSION ?= 0.0.2
+VERSION ?= 0.1.0
 ROCKSPEC = bibleit-$(VERSION)-1.rockspec
 
 .PHONY: init test-deps test check package publish generate generated-check
