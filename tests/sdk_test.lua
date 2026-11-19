@@ -127,7 +127,7 @@ function TestSDK.testAllRESTOperationsAndSchemasMatchContract()
       deep(assert(http.decode_body(json.encode(metadata))), schema)
       assert(type(b.models[name]) == "function")
    end
-   eq(count, 139); eq(#b.models.names(), count)
+   eq(count, 146); eq(#b.models.names(), count)
    operations.getLive.path = "/bad"; eq(b.operations().getLive.path, "/lives/{live_id}")
 end
 
@@ -146,6 +146,48 @@ function TestSDK.testGrantResponseScopesUseSeparateMetadata()
    local typed = assert(b.models.OAuthGrant(decoded))
    deep(typed.scopes, array({"identity.read", "live.queue.stage", "live.rename"}))
    deep(assert(http.decode_body(json.encode(typed))), decoded)
+end
+
+function TestSDK.testWorkspaceResponseMetadataDoesNotExpandOrdinaryOAuthAuthority()
+   local function contains(values, expected)
+      for _, value in ipairs(values) do if value == expected then return true end end
+      return false
+   end
+   for _, name in ipairs({"McpOAuthScope", "OAuthGrantedScope"}) do
+      local scopes = assert(b.models.schema(name)).enum
+      eq(contains(scopes, "broadcast.get"), true)
+      eq(contains(scopes, "broadcast.manage"), false)
+      eq(contains(scopes, "broadcast.publish"), false)
+   end
+   eq(contains(assert(b.models.schema("OAuthScope")).enum, "broadcast.get"), false)
+   eq(contains(assert(b.models.schema("OAuthMetadata")).properties.scopes_supported.items.enum,
+      "broadcast.get"), false)
+   local probe = assert(b.models.schema("McpOAuthProbe"))
+   local workspaces = probe.properties.workspace_permissions
+   eq(workspaces.type, "array"); eq(workspaces.maxItems, 1)
+   eq(workspaces.items["$ref"], "#/components/schemas/McpWorkspacePermission")
+   eq(contains(probe.required, "workspace_permissions"), false)
+   local binding = assert(b.models.schema("McpWorkspacePermission"))
+   eq(binding.additionalProperties, false)
+   deep(binding.required, array({"organization_id", "name", "scopes"}))
+   eq(binding.properties.scopes.items.const, "broadcast.get")
+   eq(binding.properties.scopes.minItems, 1); eq(binding.properties.scopes.maxItems, 1)
+
+   -- Constructors retain exact data rather than treating a profile as authority.
+   local wire = '{"scopes":["identity.read","broadcast.get"],"workspace_permissions":[{"organization_id":"00000000-0000-4000-8000-000000000001","name":"Synthetic workspace","scopes":["broadcast.get"]}]}'
+   local decoded = assert(response(200, wire):decode())
+   local typed = assert(b.models.McpOAuthProbe(decoded))
+   deep(typed, decoded)
+   deep(assert(http.decode_body(json.encode(typed))), decoded)
+   deep(assert(b.models.McpWorkspacePermission(decoded.workspace_permissions[1])),
+      decoded.workspace_permissions[1])
+   local legacy = assert(b.models.McpOAuthProbe({scopes=array({"identity.read"})}))
+   eq(legacy.workspace_permissions, nil)
+
+   local ordinary = assert(b.models.schema("OAuthResourceError"))
+   eq(contains(ordinary.properties.error.enum, "not_found"), false)
+   local consent = assert(b.models.schema("McpWorkspaceConsentError"))
+   eq(contains(consent.properties.error.enum, "not_found"), true)
 end
 
 function TestSDK.testRESTExactHeadersStreamingEncodingAndBoundedDecode()

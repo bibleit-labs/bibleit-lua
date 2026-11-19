@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Refresh the exported schema catalogue for explicitly consented MCP workspace
+  reads: response-only `broadcast.get`, optional workspace probe metadata and
+  bounded response models. Ordinary OAuth scopes and REST bindings are unchanged.
+- Preserve legacy probe and expanded response representations without adding
+  runtime validation, granting access or enabling Broadcast.
+
 ## 0.1.0
 
 - Add all 21 Broadcast Studio REST operations and named models, synchronized
