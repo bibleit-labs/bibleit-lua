@@ -214,7 +214,7 @@ the schema representations below. Go-specific methods need documented Lua equiva
 | `Client.ReadPersonalBookPages` | `read_personal_book_pages` |
 | `Client.ReadBookPages` | `read_book_pages` |
 
-## Schema representations (111)
+## Schema representations (139)
 
 Wire fields, nullability, enums and union semantics are represented through Lua
 tables and schema metadata; generated Go conversion helpers map to the documented
@@ -226,6 +226,33 @@ Lua constructor/union helpers.
 | `AccountQuotaCollection` | Implemented |
 | `BookCollection` | Implemented |
 | `BookDefinition` | Implemented |
+| `BroadcastAttachInput` | Implemented |
+| `BroadcastChannel` | Implemented |
+| `BroadcastChannelResult` | Implemented |
+| `BroadcastDuplicateInput` | Implemented |
+| `BroadcastEmptyInput` | Implemented |
+| `BroadcastEvent` | Implemented |
+| `BroadcastEventInput` | Implemented |
+| `BroadcastEventList` | Implemented |
+| `BroadcastMixer` | Implemented |
+| `BroadcastOperation` | Implemented |
+| `BroadcastOutputProfile` | Implemented |
+| `BroadcastOutputProfileList` | Implemented |
+| `BroadcastOutputProfileSelection` | Implemented |
+| `BroadcastPreflight` | Implemented |
+| `BroadcastPublisher` | Implemented |
+| `BroadcastPublisherList` | Implemented |
+| `BroadcastScene` | Implemented |
+| `BroadcastSetup` | Implemented |
+| `BroadcastSetupDocument` | Implemented |
+| `BroadcastSetupPage` | Implemented |
+| `BroadcastSetupSummary` | Implemented |
+| `BroadcastSource` | Implemented |
+| `BroadcastThumbnailInput` | Implemented |
+| `BroadcastTransitionInput` | Implemented |
+| `BroadcastWriteIntent` | Implemented |
+| `BroadcastWriteIntentInput` | Implemented |
+| `BroadcastWriteReceipt` | Implemented |
 | `CatalogueTranslation` | Implemented |
 | `CreateLive` | Implemented |
 | `CreateLiveQueueItem` | Implemented |
@@ -258,6 +285,7 @@ Lua constructor/union helpers.
 | `LiveStackRemoval` | Implemented |
 | `LiveStackVerse` | Implemented |
 | `LiveStatistics` | Implemented |
+| `LiveStudioOverlayNode` | Implemented |
 | `LiveStudioSettings` | Implemented |
 | `LiveStudioSettingsInput` | Implemented |
 | `LiveSubscriber` | Implemented |
