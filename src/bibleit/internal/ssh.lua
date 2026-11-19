@@ -395,4 +395,18 @@ function Client:control_live(id, action, ctx)
    end)
 end
 
+-- These wrappers execute once. In particular, uncertain mutations are returned
+-- unchanged so callers can reconcile the original ticket/request UUID.
+local broadcast_commands = {
+   setup_list = 3, setup_get = 2, setup_document = 4,
+   write_intent = 7, write_begin = 2, write_status = 2, write_inspect = 2,
+   write_abort = 2, write_chunk = 4, write_commit = 3,
+   profiles = 1, channel = 1, preflight = 1, events = 1, publishers = 1, takeover = 1,
+   event_get = 2, operation_get = 2, publisher_get = 2,
+   event_create = 3, event_attach = 3, event_transition = 5, publisher_stop = 3,
+}
+for name, arity in pairs(broadcast_commands) do
+   Client["broadcast_" .. name] = raw({ fn = command["broadcast_" .. name .. "_command"], n = arity })
+end
+
 return M

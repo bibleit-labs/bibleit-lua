@@ -159,6 +159,70 @@ translation metadata/catalogs, token metadata, organization directory/applicatio
 status, and Live state/list/stats/stack/push/pop/control. See the inventory for
 all methods. Version-specific request and response escaping remains distinct.
 
+## Broadcast Studio
+
+REST exposes the canonical broadcast operations through snake_case methods such
+as `list_broadcast_setups`, `create_broadcast_write_request`,
+`replace_broadcast_setup`, `transition_broadcast_event` and
+`stop_broadcast_publisher`. Broadcast schemas are available through `models`.
+Personal `bt_` tokens require the corresponding broadcast scope and current
+workspace membership and role. Organization service and delegated OAuth tokens
+cannot use this surface. Setup writes require a retained server-signed ticket;
+event operations require a retained client UUID. The server enforces revisions,
+workspace authority, admission and capture readiness on every operation.
+
+Signed Setup payloads must preserve exact bytes, including whitespace. Use
+`options.body`, `content_length`, `content_type="application/json"`,
+`idempotency_key` (the original ticket) and `if_match` (for example
+`'"setup-4"'`) rather than re-encoding with `options.json`. Obtain the ticket with
+an intent binding the exact byte count and SHA-256. The SDK does not calculate
+hashes, persist tickets, or automatically retry ambiguous operations.
+
+SSH builders are `broadcast_<operation>_command`; matching client methods are
+`broadcast_<operation>`. Families cover Setup list/get/document, write
+intent/begin/inspect/chunk/commit/status/abort, profiles/channel/preflight,
+events/create/attach/transitions, operation status, publishers/get/stop and
+browser-required takeover. These return protocol responses with original fields;
+`decode_broadcast_lifecycle(response, "event")` decodes a lifecycle projection
+into `{value=..., raw=...}` or `{values=..., raw=...}` for lists. Unknown JSON
+fields and nullable channels are retained. Revisions beyond Lua's exact numeric
+range must be supplied as decimal strings, up to signed int64 maximum.
+
+Lua 5.1/5.2 and LuaJIT cannot represent every JSON int64 exactly. Generic REST
+response decoding follows dkjson's native number representation. For revisions
+above `9007199254740991`, retain the exact decimal digits from the response's
+ETag (for example, `response.headers.etag:match('^"setup%-(%d+)"$')`) instead
+of converting the decoded JSON number. Broadcast SSH constructors reject numeric
+revision inputs outside that portable exact range, so a rounded REST revision
+cannot silently enter a command. Supply the exact ETag in REST `if_match`.
+When such a revision must appear in a write-intent JSON body, use a validated
+exact decimal token in a raw JSON body; `options.json` with a Lua number can lose
+precision before encoding. Do not quote the numeric JSON token or blindly
+round-trip decoded revision numbers. For example, with an exact `revision` from
+the ETag, caller-retained `payload` bytes and their lowercase SHA-256:
+
+```lua
+-- Validate the exact revision, UUIDs, payload length and hash before interpolation.
+assert(bibleit.broadcast_write_intent_command(org, "save", setup_id,
+   revision, #payload, sha256))
+local intent = string.format(
+   '{"operation":"save","target_id":"%s","expected_revision":%s,' ..
+   '"payload_bytes":%d,"payload_sha256":"%s"}',
+   setup_id, revision, #payload, sha256)
+local response = assert(client:create_broadcast_write_request(org, {
+   body = intent, content_length = #intent, content_type = "application/json"
+}))
+-- Retain its request_id privately; submit the original payload bytes with that
+-- ticket and the exact original If-Match value. Do not create a fresh ticket on retry.
+```
+
+
+Negotiate `broadcast.read.v1`, `broadcast.write.v1` and
+`broadcast.lifecycle.v1` through server info before using each command family.
+Begin, inspect, chunk, commit and abort require one caller-owned persistent
+non-PTY SSH shell. Reconnect never recreates capture or starts publishing. The
+SDK exposes no camera capture, Google consent or publisher-admission override.
+
 ## Transport injection
 
 A transport is a function `request(request_table, context)` or an object with

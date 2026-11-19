@@ -146,4 +146,46 @@ function M.decode_command_response(cmd, input)
    return decode(input, cmd:string():find("^ACCOUNT TRANSLATION ") ~= nil)
 end
 
+-- Decode the explicit lifecycle projection; unknown JSON fields are preserved.
+-- A nullable channel remains dkjson.null, rather than becoming an error result.
+function M.decode_broadcast_lifecycle(response, expected_type)
+   return errors.protect(function()
+      local kinds = { channel = true, event = true, operation = true, publisher = true, preflight = true }
+      util.assert(kinds[expected_type], "unsupported lifecycle projection")
+      util.assert(type(response) == "table" and type(response.records) == "table" and #response.records > 0,
+         "missing lifecycle response")
+      local mime = require("bibleit.internal.base64")
+      local function value(record)
+         local f = record.fields
+         util.assert(type(f) == "table" and f.document_format == "broadcast-lifecycle-json-v1"
+            and f.record_type == expected_type, "unexpected lifecycle projection format")
+         util.assert(type(f.bytes) == "string" and f.bytes:match("^%d+$") and tonumber(f.bytes) <= 1048576,
+            "invalid lifecycle byte count")
+         util.assert(type(f.data_base64) == "string" and #f.data_base64 <= 1398104, "invalid lifecycle payload")
+         local bytes = mime.unb64(f.data_base64)
+         util.assert(type(bytes) == "string" and #bytes == tonumber(f.bytes) and mime.b64(bytes) == f.data_base64,
+            "invalid lifecycle payload encoding or length")
+         local data, err = http.decode_body(bytes); if not data then error(err, 0) end
+         util.assert(type(data) == "table" and data.value ~= nil, "missing lifecycle value envelope")
+         return data.value
+      end
+      local header = response.records[1]
+      util.assert(header.type == "ok", "expected lifecycle OK header")
+      if header.fields.count ~= nil then
+         util.assert(type(header.fields.count) == "string" and header.fields.count:match("^%d+$")
+            and tonumber(header.fields.count) == #response.records - 1, "lifecycle list count mismatch")
+         local row_type = expected_type == "event" and "youtube_event" or expected_type == "publisher" and "publisher"
+         util.assert(row_type, "projection does not support lists")
+         local values = setmetatable({}, { __jsontype = "array" })
+         for i = 2, #response.records do
+            util.assert(response.records[i].type == row_type, "unexpected lifecycle list row")
+            values[#values + 1] = value(response.records[i])
+         end
+         return { values = values, raw = response }
+      end
+      util.assert(#response.records == 1, "unexpected lifecycle rows")
+      return { value = value(header), raw = response }
+   end)
+end
+
 return M

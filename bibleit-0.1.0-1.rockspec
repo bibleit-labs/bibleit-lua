@@ -1,9 +1,9 @@
 rockspec_format = "3.0"
 package = "bibleit"
-version = "0.0.2-1"
+version = "0.1.0-1"
 source = {
    url = "git+https://github.com/bibleit-labs/bibleit-lua.git",
-   tag = "v0.0.2",
+   tag = "v0.1.0",
 }
 description = {
    summary = "Bring Bibleit’s Bible reading and live Scripture sharing into your Lua applications.",
@@ -33,6 +33,7 @@ build = {
       ["bibleit.errors"] = "src/bibleit/errors.lua",
       ["bibleit.http"] = "src/bibleit/http.lua",
       ["bibleit"] = "src/bibleit/init.lua",
+      ["bibleit.internal.base64"] = "src/bibleit/internal/base64.lua",
       ["bibleit.internal.auth"] = "src/bibleit/internal/auth.lua",
       ["bibleit.internal.client"] = "src/bibleit/internal/client.lua",
       ["bibleit.internal.oauth"] = "src/bibleit/internal/oauth.lua",
