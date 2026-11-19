@@ -43,8 +43,8 @@ jobs:
           persist-credentials: false
       - name: Install build dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential lua5.4 liblua5.4-dev libssl-dev zip unzip
+          tools/ci-apt.sh update
+          tools/ci-apt.sh install -y build-essential lua5.4 liblua5.4-dev libssl-dev zip unzip
       - name: Install LuaRocks 3.13
         run: |
           curl --fail --location https://luarocks.org/releases/luarocks-3.13.0.tar.gz -o "$RUNNER_TEMP/luarocks.tar.gz"
