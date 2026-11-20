@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 — 2026-11-20
 
 - Refresh the exported schema catalogue for explicitly consented MCP workspace
   reads: response-only `broadcast.get`, optional workspace probe metadata and
