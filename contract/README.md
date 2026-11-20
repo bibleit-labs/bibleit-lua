@@ -1,8 +1,8 @@
 # Shared public contract
 
 `openapi.json` is the public Bibleit OpenAPI contract used by the Go SDK.
-The Lua metadata covers the 89 operations marked with the REST server and
-retains all 111 schema definitions. Browser/OAuth endpoints have separate
+The Lua metadata covers the 110 operations marked with the REST server and
+retains all 146 schema definitions. Browser/OAuth endpoints have separate
 handwritten clients.
 
 The request and response fixtures in `fixtures/` are shared protocol examples
@@ -22,3 +22,14 @@ regeneration. Grant response metadata references `OAuthGrantedScope`, which can
 contain MCP-only staging/rename scopes; ordinary request `OAuthScope` remains
 separate. Constructors preserve representation and do not confer permission or
 perform runtime schema validation. Existing wire JSON and table shapes are unchanged.
+
+The current snapshot is the server workspace-read contract from merged Broadcast
+commit `3f9739cf153ce263ca6ddd59c4ac701af85f017a`, SHA-256
+`a4f30711e0b588a5d4f3344daefbbbc470fe5f8dd71c4698c93aa12101f01692`.
+It adds `broadcast.get` only to MCP metadata and owner-grant response scopes,
+plus the optional single-workspace probe projection and its bounded models.
+Ordinary OAuth request scope metadata and all REST operation bindings stay
+unchanged. Consumers performing strict validation against exported `model.schema`
+metadata need this updated catalogue before processing expanded responses.
+Representation-preserving constructors still perform no authorization or runtime
+schema validation. Updating the package does not enable Broadcast or upgrade a grant.

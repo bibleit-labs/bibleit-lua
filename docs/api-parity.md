@@ -214,7 +214,7 @@ the schema representations below. Go-specific methods need documented Lua equiva
 | `Client.ReadPersonalBookPages` | `read_personal_book_pages` |
 | `Client.ReadBookPages` | `read_book_pages` |
 
-## Schema representations (139)
+## Schema representations (146)
 
 Wire fields, nullability, enums and union semantics are represented through Lua
 tables and schema metadata; generated Go conversion helpers map to the documented
@@ -291,10 +291,17 @@ Lua constructor/union helpers.
 | `LiveSubscriber` | Implemented |
 | `LiveSummary` | Implemented |
 | `LiveWorkspacePut` | Implemented |
+| `McpBroadcastChannel` | Implemented |
+| `McpBroadcastError` | Implemented |
+| `McpBroadcastSetupSummary` | Implemented |
 | `McpOAuthMetadata` | Implemented |
 | `McpOAuthProbe` | Implemented |
 | `McpOAuthProbeError` | Implemented |
 | `McpOAuthScope` | Implemented |
+| `McpWorkspace` | Implemented |
+| `McpWorkspaceConsentError` | Implemented |
+| `McpWorkspaceList` | Implemented |
+| `McpWorkspacePermission` | Implemented |
 | `Membership` | Implemented |
 | `MembershipPage` | Implemented |
 | `MembershipPatch` | Implemented |
